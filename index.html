@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Valley Event Pulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #ea4335;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 30px;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .event-date {
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+        
+        .event-location {
+            color: #666;
+        }
+        
+        .event-category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .event-category.ai-ml {
+            background-color: #cfe2ff;
+            color: #0d6efd;
+        }
+        
+        .event-category.web {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+        
+        .event-category.mobile {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+        
+        .event-category.blockchain {
+            background-color: #fff3cd;
+            color: #ffc107;
+        }
+        
+        .event-category.networking {
+            background-color: #e2e3e5;
+            color: #6c757d;
+        }
+        
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .social-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .social-icon:hover {
+            color: white;
+        }
+        
+        /* Calendar styles */
+        .calendar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav-btn {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 10px;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            position: relative;
+            min-height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: #e9ecef;
+        }
+        
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .calendar-day.today {
+            background-color: #cfe2ff;
+        }
+        
+        .calendar-day.has-events::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+        }
+        
+        .calendar-event {
+            font-size: 0.8rem;
+            padding: 2px 5px;
+            margin-bottom: 2px;
+            border-radius: 3px;
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Trends section */
+        .trend-card {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 15px;
+        }
+        
+        .trend-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .trend-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .trend-score {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+        
+        /* Filter sidebar */
+        .filter-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 0;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-calendar-event"></i> Silicon Valley Event Pulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="trends.html">Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="llm_settings.html">LLM Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">Discover Tech Events in Silicon Valley</h1>
+                    <p class="hero-subtitle">Stay updated with the latest tech meetups, conferences, and networking opportunities in the heart of innovation.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="search-box">
+                        <form>
+                            <div class="mb-3">
+                                <input type="text" class="form-control form-control-lg" placeholder="Search events...">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <select class="form-select">
+                                        <option selected>All Categories</option>
+                                        <option>AI/ML</option>
+                                        <option>Web Development</option>
+                                        <option>Mobile Development</option>
+                                        <option>Blockchain</option>
+                                        <option>Networking</option>
+                                        <option>Funding</option>
+                                        <option>Hardware</option>
+                                        <option>Cloud</option>
+                                        <option>Security</option>
+                                        <option>Data Science</option>
+                                        <option>DevOps</option>
+                                        <option>Design</option>
+                                        <option>Product Management</option>
+                                        <option>Career</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <input type="date" class="form-control">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Find Events</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    <section class="container mb-5">
+        <h2 class="mb-4">Featured Events</h2>
+        <div class="row">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="event-category ai-ml">AI/ML</span>
+                        <h5 class="card-title mt-2">Silicon Valley AI Summit 2025</h5>
+                        <p class="event-date"><i class="bi bi-calendar3"></i> Apr 20, 2025 • 9:00 AM</p>
+                        <p class="event-location"><i class="bi bi-geo-alt"></i> San Francisco Convention Center</p>
+                        <p class="card-text">Join industry leaders for a day of insights into the latest AI advancements and their impact on business and society.</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="event-category web">Web Development</span>
+                        <h5 class="card-title mt-2">ReactJS Meetup</h5>
+                        <p class="event-date"><i class="bi bi-calendar3"></i> Apr 22, 2025 • 6:30 PM</p>
+                        <p class="event-location"><i class="bi bi-geo-alt"></i> Google Campus, Mountain View</p>
+                        <p class="card-text">A community-driven event for React developers to share knowledge, experiences, and best practices.</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <span class="event-category blockchain">Blockchain</span>
+                        <h5 class="card-title mt-2">Blockchain Innovation Forum</h5>
+                        <p class="event-date"><i class="bi bi-calendar3"></i> Apr 25, 2025 • 10:00 AM</p>
+                        <p class="event-location"><i class="bi bi-geo-alt"></i> Palo Alto Research Center</p>
+                        <p class="card-text">Explore the future of blockchain technology and its applications across various industries.</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Topics Section -->
+    <section class="container mb-5">
+        <h2 class="mb-4">Trending Topics</h2>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="trend-card">
+                    <h5 class="trend-title">Generative AI Applications</h5>
+                    <p class="trend-description">The rise of practical applications for generative AI across industries is creating new opportunities for startups and enterprises.</p>
+                    <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 92</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="trend-card">
+                    <h5 class="trend-title">Web3 Development</h5>
+                    <p class="trend-description">Decentralized applications and blockchain technologies continue to evolve with a focus on scalability and user experience.</p>
+                    <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 85</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="trend-card">
+                    <h5 class="trend-title">Sustainable Tech</h5>
+                    <p class="trend-description">Growing interest in environmentally sustainable technology solutions and green tech innovations.</p>
+                    <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 78</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="trends.html" class="btn btn-outline-primary">View All Trends</a>
+        </div>
+    </section>
+
+    <!-- Upcoming Events Section -->
+    <section class="container mb-5">
+        <h2 class="mb-4">Upcoming Events</h2>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="event-category mobile">Mobile Development</span>
+                                <h5 class="card-title mt-2">iOS Developers Meetup</h5>
+                                <p class="event-date"><i class="bi bi-calendar3"></i> Apr 28, 2025 • 7:00 PM</p>
+                                <p class="event-location"><i class="bi bi-geo-alt"></i> Apple Visitor Center, Cupertino</p>
+                                <p class="card-text">Connect with fellow iOS developers and discuss the latest in Swift and iOS development.</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="#" class="btn btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="event-category networking">Networking</span>
+                                <h5 class="card-title mt-2">Women in Tech Mixer</h5>
+                                <p class="event-date"><i class="bi bi-calendar3"></i> May 2, 2025 • 6:00 PM</p>
+                                <p class="event-location"><i class="bi bi-geo-alt"></i> Salesforce Tower, San Francisco</p>
+                                <p class="card-text">An evening of networking and inspiration for women in technology fields.</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="#" class="btn btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="event-category ai-ml">AI/ML</span>
+                                <h5 class="card-title mt-2">Machine Learning Workshop</h5>
+                                <p class="event-date"><i class="bi bi-calendar3"></i> May 5, 2025 • 10:00 AM</p>
+                                <p class="event-location"><i class="bi bi-geo-alt"></i> Stanford University</p>
+                                <p class="card-text">Hands-on workshop covering practical applications of machine learning algorithms.</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="#" class="btn btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <span class="event-category web">Web Development</span>
+                                <h5 class="card-title mt-2">Full Stack Developer Conference</h5>
+                                <p class="event-date"><i class="bi bi-calendar3"></i> May 10, 2025 • 9:00 AM</p>
+                                <p class="event-location"><i class="bi bi-geo-alt"></i> Computer History Museum, Mountain View</p>
+                                <p class="card-text">A comprehensive conference covering frontend, backend, and DevOps topics for modern web development.</p>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="#" class="btn btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="events.html" class="btn btn-primary">View All Events</a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="filter-section">
+                    <h4 class="filter-title">Filter Events</h4>
+                    <div class="filter-group">
+                        <p class="filter-label">Categories</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category1" checked>
+                            <label class="form-check-label" for="category1">AI/ML</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category2" checked>
+                            <label class="form-check-label" for="category2">Web Development</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category3" checked>
+                            <label class="form-check-label" for="category3">Mobile Development</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category4" checked>
+                            <label class="form-check-label" for="category4">Blockchain</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category5" checked>
+                            <label class="form-check-label" for="category5">Networking</label>
+                        </div>
+                        <a href="#" class="btn btn-link btn-sm p-0">Show more</a>
+                    </div>
+                    <div class="filter-group">
+                        <p class="filter-label">Date Range</p>
+                        <div class="mb-3">
+                            <label class="form-label">From</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">To</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <p class="filter-label">Event Type</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type1" checked>
+                            <label class="form-check-label" for="type1">In-person</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type2" checked>
+                            <label class="form-check-label" for="type2">Virtual</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type3" checked>
+                            <label class="form-check-label" for="type3">Hybrid</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">Silicon Valley Event Pulse</h5>
+                    <p>Your comprehensive source for tech events and trends in Silicon Valley.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="calendar.html" class="footer-link">Calendar</a></li>
+                        <li><a href="trends.html" class="footer-link">Trends</a></li>
+                        <li><a href="llm_settings.html" class="footer-link">LLM Settings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">AI/ML</a></li>
+                        <li><a href="#" class="footer-link">Web Development</a></li>
+                        <li><a href="#" class="footer-link">Mobile Development</a></li>
+                        <li><a href="#" class="footer-link">Blockchain</a></li>
+                        <li><a href="#" class="footer-link">Networking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5 class="footer-title">Subscribe</h5>
+                    <p>Get weekly updates on upcoming events and tech trends.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Silicon Valley Event Pulse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

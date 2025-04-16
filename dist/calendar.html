@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Valley Event Pulse - Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #ea4335;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .calendar-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav-btn {
+            background-color: #f8f9fa;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 10px;
+        }
+        
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            position: relative;
+            min-height: 120px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background-color: #e9ecef;
+        }
+        
+        .calendar-day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .calendar-day.today {
+            background-color: #cfe2ff;
+        }
+        
+        .calendar-day.other-month {
+            opacity: 0.5;
+        }
+        
+        .calendar-day.has-events::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+        }
+        
+        .calendar-event {
+            font-size: 0.8rem;
+            padding: 2px 5px;
+            margin-bottom: 2px;
+            border-radius: 3px;
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--primary-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .calendar-event.ai-ml {
+            background-color: rgba(66, 133, 244, 0.1);
+            color: #0d6efd;
+        }
+        
+        .calendar-event.web {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: #198754;
+        }
+        
+        .calendar-event.mobile {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: #dc3545;
+        }
+        
+        .calendar-event.blockchain {
+            background-color: rgba(251, 188, 5, 0.1);
+            color: #ffc107;
+        }
+        
+        .calendar-event.networking {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+        
+        .calendar-view-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-view-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-view-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .filter-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            margin-bottom: 20px;
+        }
+        
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .event-list {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .event-list-item {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s ease;
+        }
+        
+        .event-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .event-list-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .event-list-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .event-list-date {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .event-list-location {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .event-list-category {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .social-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .social-icon:hover {
+            color: white;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 0;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-calendar-event"></i> Silicon Valley Event Pulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="trends.html">Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="llm_settings.html">LLM Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Event Calendar</h1>
+            <p class="page-subtitle">Browse and discover tech events in Silicon Valley by date</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="filter-section">
+                    <h4 class="filter-title">Filter Events</h4>
+                    <div class="filter-group">
+                        <p class="filter-label">Categories</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category1" checked>
+                            <label class="form-check-label" for="category1">AI/ML</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category2" checked>
+                            <label class="form-check-label" for="category2">Web Development</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category3" checked>
+                            <label class="form-check-label" for="category3">Mobile Development</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category4" checked>
+                            <label class="form-check-label" for="category4">Blockchain</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="category5" checked>
+                            <label class="form-check-label" for="category5">Networking</label>
+                        </div>
+                        <a href="#" class="btn btn-link btn-sm p-0">Show more</a>
+                    </div>
+                    <div class="filter-group">
+                        <p class="filter-label">Event Type</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type1" checked>
+                            <label class="form-check-label" for="type1">In-person</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type2" checked>
+                            <label class="form-check-label" for="type2">Virtual</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="type3" checked>
+                            <label class="form-check-label" for="type3">Hybrid</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <p class="filter-label">Location</p>
+                        <select class="form-select mb-3">
+                            <option selected>All Locations</option>
+                            <option>San Francisco</option>
+                            <option>Palo Alto</option>
+                            <option>Mountain View</option>
+                            <option>Cupertino</option>
+                            <option>Sunnyvale</option>
+                            <option>San Jose</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100">Apply Filters</button>
+                </div>
+            </div>
+            
+            <!-- Calendar -->
+            <div class="col-lg-9">
+                <div class="calendar-view-selector">
+                    <button class="calendar-view-btn active">Month</button>
+                    <button class="calendar-view-btn">Week</button>
+                    <button class="calendar-view-btn">Day</button>
+                    <button class="calendar-view-btn">List</button>
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="calendar-title">April 2025</div>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn"><i class="bi bi-chevron-left"></i></button>
+                            <button class="calendar-nav-btn">Today</button>
+                            <button class="calendar-nav-btn"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-weekdays">
+                        <div class="calendar-weekday">Sun</div>
+                        <div class="calendar-weekday">Mon</div>
+                        <div class="calendar-weekday">Tue</div>
+                        <div class="calendar-weekday">Wed</div>
+                        <div class="calendar-weekday">Thu</div>
+                        <div class="calendar-weekday">Fri</div>
+                        <div class="calendar-weekday">Sat</div>
+                    </div>
+                    
+                    <div class="calendar-days">
+                        <!-- Previous month -->
+                        <div class="calendar-day other-month">
+                            <div class="calendar-day-number">30</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="calendar-day-number">31</div>
+                        </div>
+                        
+                        <!-- Current month -->
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">1</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">2</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">3</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">4</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">5</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">6</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">7</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">8</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">9</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">10</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">11</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">12</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">13</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">14</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">15</div>
+                            <div class="calendar-event web">Web Dev Meetup</div>
+                        </div>
+                        <div class="calendar-day today">
+                            <div class="calendar-day-number">16</div>
+                            <div class="calendar-event ai-ml">AI Workshop</div>
+                            <div class="calendar-event blockchain">Blockchain Talk</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">17</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">18</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">19</div>
+                        </div>
+                        <div class="calendar-day has-events">
+                            <div class="calendar-day-number">20</div>
+                            <div class="calendar-event ai-ml">AI Summit 2025</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">21</div>
+                        </div>
+                        <div class="calendar-day has-events">
+                            <div class="calendar-day-number">22</div>
+                            <div class="calendar-event web">ReactJS Meetup</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">23</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">24</div>
+                        </div>
+                        <div class="calendar-day has-events">
+                            <div class="calendar-day-number">25</div>
+                            <div class="calendar-event blockchain">Blockchain Forum</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">26</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">27</div>
+                        </div>
+                        <div class="calendar-day has-events">
+                            <div class="calendar-day-number">28</div>
+                            <div class="calendar-event mobile">iOS Developers</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">29</div>
+                        </div>
+                        <div class="calendar-day">
+                            <div class="calendar-day-number">30</div>
+                        </div>
+                        
+                        <!-- Next month -->
+                        <div class="calendar-day other-month">
+                            <div class="calendar-day-number">1</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="calendar-day-number">2</div>
+                            <div class="calendar-event networking">Women in Tech</div>
+                        </div>
+                        <div class="calendar-day other-month">
+                            <div class="calendar-day-number">3</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-list">
+                    <h4 class="mb-3">Upcoming Events</h4>
+                    <div class="event-list-item">
+                        <div class="event-list-category ai-ml">AI/ML</div>
+                        <h5 class="event-list-title">Silicon Valley AI Summit 2025</h5>
+                        <p class="event-list-date"><i class="bi bi-calendar3"></i> Apr 20, 2025 • 9:00 AM</p>
+                        <p class="event-list-location"><i class="bi bi-geo-alt"></i> San Francisco Convention Center</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="event-list-item">
+                        <div class="event-list-category web">Web Development</div>
+                        <h5 class="event-list-title">ReactJS Meetup</h5>
+                        <p class="event-list-date"><i class="bi bi-calendar3"></i> Apr 22, 2025 • 6:30 PM</p>
+                        <p class="event-list-location"><i class="bi bi-geo-alt"></i> Google Campus, Mountain View</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="event-list-item">
+                        <div class="event-list-category blockchain">Blockchain</div>
+                        <h5 class="event-list-title">Blockchain Innovation Forum</h5>
+                        <p class="event-list-date"><i class="bi bi-calendar3"></i> Apr 25, 2025 • 10:00 AM</p>
+                        <p class="event-list-location"><i class="bi bi-geo-alt"></i> Palo Alto Research Center</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="event-list-item">
+                        <div class="event-list-category mobile">Mobile Development</div>
+                        <h5 class="event-list-title">iOS Developers Meetup</h5>
+                        <p class="event-list-date"><i class="bi bi-calendar3"></i> Apr 28, 2025 • 7:00 PM</p>
+                        <p class="event-list-location"><i class="bi bi-geo-alt"></i> Apple Visitor Center, Cupertino</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="event-list-item">
+                        <div class="event-list-category networking">Networking</div>
+                        <h5 class="event-list-title">Women in Tech Mixer</h5>
+                        <p class="event-list-date"><i class="bi bi-calendar3"></i> May 2, 2025 • 6:00 PM</p>
+                        <p class="event-list-location"><i class="bi bi-geo-alt"></i> Salesforce Tower, San Francisco</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">Silicon Valley Event Pulse</h5>
+                    <p>Your comprehensive source for tech events and trends in Silicon Valley.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="calendar.html" class="footer-link">Calendar</a></li>
+                        <li><a href="trends.html" class="footer-link">Trends</a></li>
+                        <li><a href="llm_settings.html" class="footer-link">LLM Settings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">AI/ML</a></li>
+                        <li><a href="#" class="footer-link">Web Development</a></li>
+                        <li><a href="#" class="footer-link">Mobile Development</a></li>
+                        <li><a href="#" class="footer-link">Blockchain</a></li>
+                        <li><a href="#" class="footer-link">Networking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5 class="footer-title">Subscribe</h5>
+                    <p>Get weekly updates on upcoming events and tech trends.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Silicon Valley Event Pulse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calendar view selector
+            const viewButtons = document.querySelectorAll('.calendar-view-btn');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Calendar day click event
+            const calendarDays = document.querySelectorAll('.calendar-day');
+            calendarDays.forEach(day => {
+                day.addEventListener('click', function() {
+                    // Here you would typically show events for the selected day
+                    // For now, just highlight the selected day
+                    calendarDays.forEach(d => d.style.border = 'none');
+                    this.style.border = '2px solid var(--primary-color)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

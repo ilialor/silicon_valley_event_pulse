@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Valley Event Pulse - Tech Events & Trends</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/styles.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-calendar-event"></i> Silicon Valley Event Pulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="trends.html">Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="llm_settings.html">LLM Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Discover Tech Events in Silicon Valley</h1>
+            <p class="hero-subtitle">Find and analyze the latest technology events, conferences, and meetups</p>
+            <div class="search-box">
+                <form>
+                    <input type="text" placeholder="Search for events, topics, or speakers...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Events -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="mb-4">Featured Events</h2>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="event-card-img" style="background-image: url('https://via.placeholder.com/600x400/4285f4/ffffff?text=AI+Summit');"></div>
+                        <div class="event-card-content">
+                            <h3 class="event-card-title">Silicon Valley AI Summit 2025</h3>
+                            <div class="event-card-meta">
+                                <span><i class="bi bi-calendar"></i> Apr 20, 2025</span>
+                                <span><i class="bi bi-geo-alt"></i> San Francisco</span>
+                            </div>
+                            <p class="event-card-description">Join industry leaders for a day of insights into the latest AI advancements and their impact on business and society.</p>
+                            <div class="event-card-footer">
+                                <span class="event-card-category">AI/ML</span>
+                                <a href="event_details.html" class="event-card-link">View Details <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="event-card-img" style="background-image: url('https://via.placeholder.com/600x400/34a853/ffffff?text=Web3+Conference');"></div>
+                        <div class="event-card-content">
+                            <h3 class="event-card-title">Web3 Developer Conference</h3>
+                            <div class="event-card-meta">
+                                <span><i class="bi bi-calendar"></i> May 15, 2025</span>
+                                <span><i class="bi bi-geo-alt"></i> Palo Alto</span>
+                            </div>
+                            <p class="event-card-description">Explore the future of decentralized applications with workshops, talks, and networking opportunities for Web3 developers.</p>
+                            <div class="event-card-footer">
+                                <span class="event-card-category">Blockchain</span>
+                                <a href="event_details.html" class="event-card-link">View Details <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="event-card-img" style="background-image: url('https://via.placeholder.com/600x400/ea4335/ffffff?text=Startup+Pitch');"></div>
+                        <div class="event-card-content">
+                            <h3 class="event-card-title">YC Startup Pitch Night</h3>
+                            <div class="event-card-meta">
+                                <span><i class="bi bi-calendar"></i> Jun 5, 2025</span>
+                                <span><i class="bi bi-geo-alt"></i> Mountain View</span>
+                            </div>
+                            <p class="event-card-description">Watch promising startups pitch their innovative ideas to investors and industry experts. Networking reception to follow.</p>
+                            <div class="event-card-footer">
+                                <span class="event-card-category">Startup</span>
+                                <a href="event_details.html" class="event-card-link">View Details <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="calendar.html" class="btn btn-outline-primary">View All Events</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="mb-4">Browse by Category</h2>
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-robot fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">AI & Machine Learning</h5>
+                            <p class="card-text">42 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-globe fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Web Development</h5>
+                            <p class="card-text">38 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-phone fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Mobile Development</h5>
+                            <p class="card-text">27 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-link-45deg fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Blockchain & Web3</h5>
+                            <p class="card-text">23 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-cloud fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Cloud Computing</h5>
+                            <p class="card-text">19 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-shield-lock fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Cybersecurity</h5>
+                            <p class="card-text">15 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-graph-up fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Data Science</h5>
+                            <p class="card-text">31 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="bi bi-lightbulb fs-1 text-primary mb-3"></i>
+                            <h5 class="card-title">Startup & VC</h5>
+                            <p class="card-text">29 upcoming events</p>
+                            <a href="#" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Topics -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-6">
+                    <h2 class="mb-0">Trending Topics</h2>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="trends.html" class="btn btn-link">View Full Analysis <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="trend-card">
+                        <div class="trend-card-header">
+                            <h3 class="trend-card-title">Generative AI</h3>
+                            <p class="trend-card-subtitle">Rapidly growing trend</p>
+                            <div class="trend-card-score">92</div>
+                        </div>
+                        <div class="trend-card-content">
+                            <p class="trend-card-description">The rise of practical applications for generative AI across industries is creating new opportunities for startups and enterprises.</p>
+                            <div class="trend-card-stats">
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">47</div>
+                                    <div class="trend-card-stat-label">Events</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">+128%</div>
+                                    <div class="trend-card-stat-label">Growth</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">12K+</div>
+                                    <div class="trend-card-stat-label">Attendees</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="trend-card">
+                        <div class="trend-card-header">
+                            <h3 class="trend-card-title">Web3 Development</h3>
+                            <p class="trend-card-subtitle">Steady growth</p>
+                            <div class="trend-card-score">85</div>
+                        </div>
+                        <div class="trend-card-content">
+                            <p class="trend-card-description">Decentralized applications and blockchain technologies continue to evolve with a focus on scalability and user experience.</p>
+                            <div class="trend-card-stats">
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">32</div>
+                                    <div class="trend-card-stat-label">Events</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">+65%</div>
+                                    <div class="trend-card-stat-label">Growth</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">8K+</div>
+                                    <div class="trend-card-stat-label">Attendees</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="trend-card">
+                        <div class="trend-card-header">
+                            <h3 class="trend-card-title">Edge Computing</h3>
+                            <p class="trend-card-subtitle">Emerging trend</p>
+                            <div class="trend-card-score">78</div>
+                        </div>
+                        <div class="trend-card-content">
+                            <p class="trend-card-description">Processing data closer to where it's generated is gaining traction as IoT devices proliferate and real-time processing becomes critical.</p>
+                            <div class="trend-card-stats">
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">24</div>
+                                    <div class="trend-card-stat-label">Events</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">+92%</div>
+                                    <div class="trend-card-stat-label">Growth</div>
+                                </div>
+                                <div class="trend-card-stat">
+                                    <div class="trend-card-stat-value">5K+</div>
+                                    <div class="trend-card-stat-label">Attendees</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">Silicon Valley Event Pulse</h5>
+                    <p>Your comprehensive source for tech events and trends in Silicon Valley.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="calendar.html" class="footer-link">Calendar</a></li>
+                        <li><a href="trends.html" class="footer-link">Trends</a></li>
+                        <li><a href="llm_settings.html" class="footer-link">LLM Settings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">AI/ML</a></li>
+                        <li><a href="#" class="footer-link">Web Development</a></li>
+                        <li><a href="#" class="footer-link">Mobile Development</a></li>
+                        <li><a href="#" class="footer-link">Blockchain</a></li>
+                        <li><a href="#" class="footer-link">Networking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5 class="footer-title">Subscribe</h5>
+                    <p>Get weekly updates on upcoming events and tech trends.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Silicon Valley Event Pulse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Valley Event Pulse - Event Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #ea4335;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .event-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .event-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+        }
+        
+        .event-meta-icon {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        
+        .event-category {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        
+        .event-category.ai-ml {
+            background-color: #cfe2ff;
+            color: #0d6efd;
+        }
+        
+        .event-description {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .event-summary {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 30px;
+            font-style: italic;
+            color: #495057;
+        }
+        
+        .event-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .event-map {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #e9ecef;
+        }
+        
+        .event-action-btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .event-organizer {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .organizer-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .organizer-description {
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .related-events {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .related-event-item {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s ease;
+        }
+        
+        .related-event-item:last-child {
+            border-bottom: none;
+        }
+        
+        .related-event-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .related-event-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .related-event-date {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .social-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .social-icon:hover {
+            color: white;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 0;
+            }
+            
+            .event-title {
+                font-size: 1.8rem;
+            }
+            
+            .event-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-calendar-event"></i> Silicon Valley Event Pulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="trends.html">Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="llm_settings.html">LLM Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="calendar.html">Events</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Silicon Valley AI Summit 2025</li>
+            </ol>
+        </nav>
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="event-container">
+                    <span class="event-category ai-ml">AI/ML</span>
+                    <h1 class="event-title">Silicon Valley AI Summit 2025</h1>
+                    
+                    <div class="event-meta">
+                        <div class="event-meta-item">
+                            <i class="bi bi-calendar3 event-meta-icon"></i>
+                            April 20, 2025
+                        </div>
+                        <div class="event-meta-item">
+                            <i class="bi bi-clock event-meta-icon"></i>
+                            9:00 AM - 6:00 PM
+                        </div>
+                        <div class="event-meta-item">
+                            <i class="bi bi-geo-alt event-meta-icon"></i>
+                            San Francisco Convention Center
+                        </div>
+                        <div class="event-meta-item">
+                            <i class="bi bi-person event-meta-icon"></i>
+                            Organized by AI Research Foundation
+                        </div>
+                    </div>
+                    
+                    <div class="event-summary">
+                        <p>Join industry leaders for a day of insights into the latest AI advancements and their impact on business and society. This premier event brings together researchers, entrepreneurs, and tech enthusiasts to explore cutting-edge developments in artificial intelligence.</p>
+                    </div>
+                    
+                    <img src="https://via.placeholder.com/800x400?text=AI+Summit+2025" alt="AI Summit 2025" class="event-image">
+                    
+                    <div class="event-description">
+                        <h4>About This Event</h4>
+                        <p>The Silicon Valley AI Summit 2025 is the premier gathering for AI professionals, researchers, and enthusiasts. This full-day conference will feature keynote presentations, panel discussions, and interactive workshops covering the latest advancements in artificial intelligence and machine learning.</p>
+                        
+                        <p>Topics will include:</p>
+                        <ul>
+                            <li>Generative AI and its applications across industries</li>
+                            <li>Ethical considerations in AI development</li>
+                            <li>AI for sustainability and climate solutions</li>
+                            <li>The future of human-AI collaboration</li>
+                            <li>Advances in natural language processing and computer vision</li>
+                        </ul>
+                        
+                        <h4>Schedule</h4>
+                        <p><strong>9:00 AM - 10:00 AM:</strong> Registration and Networking Breakfast</p>
+                        <p><strong>10:00 AM - 11:30 AM:</strong> Opening Keynote: "The Next Frontier in AI"</p>
+                        <p><strong>11:45 AM - 1:00 PM:</strong> Panel Discussion: "AI Ethics and Governance"</p>
+                        <p><strong>1:00 PM - 2:00 PM:</strong> Lunch Break and Networking</p>
+                        <p><strong>2:00 PM - 3:30 PM:</strong> Breakout Sessions (Multiple Tracks)</p>
+                        <p><strong>3:45 PM - 5:00 PM:</strong> Industry Applications Showcase</p>
+                        <p><strong>5:00 PM - 6:00 PM:</strong> Closing Keynote and Networking Reception</p>
+                        
+                        <h4>Who Should Attend</h4>
+                        <p>This event is designed for AI researchers, data scientists, software engineers, product managers, entrepreneurs, investors, and anyone interested in the future of artificial intelligence and its impact on business and society.</p>
+                    </div>
+                    
+                    <div class="event-map">
+                        <!-- Placeholder for map -->
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <p class="text-muted">Map of San Francisco Convention Center</p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex flex-wrap">
+                        <a href="#" class="btn btn-primary event-action-btn">Register Now</a>
+                        <a href="#" class="btn btn-outline-primary event-action-btn">Add to Calendar</a>
+                        <a href="#" class="btn btn-outline-secondary event-action-btn">Share Event</a>
+                    </div>
+                </div>
+                
+                <div class="event-organizer">
+                    <h4 class="organizer-title">About the Organizer</h4>
+                    <p class="organizer-description">The AI Research Foundation is a non-profit organization dedicated to advancing the field of artificial intelligence through research, education, and community building. Founded in 2020, the foundation has organized numerous events and initiatives to promote responsible AI development and adoption.</p>
+                    <a href="#" class="btn btn-outline-primary">View Organizer Profile</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="related-events">
+                    <h4 class="mb-3">Related Events</h4>
+                    <div class="related-event-item">
+                        <h5 class="related-event-title">Machine Learning Workshop</h5>
+                        <p class="related-event-date"><i class="bi bi-calendar3"></i> May 5, 2025</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="related-event-item">
+                        <h5 class="related-event-title">AI Ethics Panel Discussion</h5>
+                        <p class="related-event-date"><i class="bi bi-calendar3"></i> May 15, 2025</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="related-event-item">
+                        <h5 class="related-event-title">Deep Learning Conference</h5>
+                        <p class="related-event-date"><i class="bi bi-calendar3"></i> June 10, 2025</p>
+                        <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Event Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Date:</strong> April 20, 2025</p>
+                        <p><strong>Time:</strong> 9:00 AM - 6:00 PM</p>
+                        <p><strong>Location:</strong> San Francisco Convention Center</p>
+                        <p><strong>Address:</strong> 747 Howard St, San Francisco, CA 94103</p>
+                        <p><strong>Price:</strong> $299 - $499</p>
+                        <p><strong>Website:</strong> <a href="#">aisummit2025.com</a></p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Share This Event</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-3">
+                            <a href="#" class="btn btn-outline-primary"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="btn btn-outline-primary"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="btn btn-outline-primary"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="btn btn-outline-primary"><i class="bi bi-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">Silicon Valley Event Pulse</h5>
+                    <p>Your comprehensive source for tech events and trends in Silicon Valley.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="calendar.html" class="footer-link">Calendar</a></li>
+                        <li><a href="trends.html" class="footer-link">Trends</a></li>
+                        <li><a href="llm_settings.html" class="footer-link">LLM Settings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">AI/ML</a></li>
+                        <li><a href="#" class="footer-link">Web Development</a></li>
+                        <li><a href="#" class="footer-link">Mobile Development</a></li>
+                        <li><a href="#" class="footer-link">Blockchain</a></li>
+                        <li><a href="#" class="footer-link">Networking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5 class="footer-title">Subscribe</h5>
+                    <p>Get weekly updates on upcoming events and tech trends.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Silicon Valley Event Pulse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

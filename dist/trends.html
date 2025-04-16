@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Valley Event Pulse - Trends</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --accent-color: #ea4335;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .trend-card {
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .trend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .trend-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .trend-description {
+            color: #6c757d;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .trend-score {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .trend-events {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .trend-event-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .trend-event-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .trend-event-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .trend-event-date {
+            color: var(--accent-color);
+            font-size: 0.85rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .category-distribution {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .category-item {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background-color: #e9ecef;
+            color: #495057;
+            display: flex;
+            align-items: center;
+        }
+        
+        .category-count {
+            background-color: white;
+            color: var(--primary-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .time-filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .time-filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        .social-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .social-icon:hover {
+            color: white;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 0;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .trend-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-calendar-event"></i> Silicon Valley Event Pulse
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="trends.html">Trends</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="llm_settings.html">LLM Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1 class="page-title">Tech Trends in Silicon Valley</h1>
+            <p class="page-subtitle">Discover emerging trends and patterns in the tech ecosystem based on event data analysis</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="content-container">
+                    <div class="time-filter">
+                        <button class="time-filter-btn active">Last 30 Days</button>
+                        <button class="time-filter-btn">Last 3 Months</button>
+                        <button class="time-filter-btn">Last 6 Months</button>
+                        <button class="time-filter-btn">Last Year</button>
+                    </div>
+                    
+                    <h3 class="mb-4">Top Trends</h3>
+                    
+                    <div class="trend-card">
+                        <h4 class="trend-title">Generative AI Applications</h4>
+                        <p class="trend-description">The rise of practical applications for generative AI across industries is creating new opportunities for startups and enterprises. Companies are increasingly focusing on implementing AI solutions that can create content, design products, and automate creative processes.</p>
+                        <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 92</p>
+                        <div class="trend-events">
+                            <h5 class="mb-3">Related Events</h5>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Silicon Valley AI Summit 2025</div>
+                                <div class="trend-event-date">April 20, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Generative AI Workshop</div>
+                                <div class="trend-event-date">May 5, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">AI for Creative Industries</div>
+                                <div class="trend-event-date">May 15, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <h4 class="trend-title">Web3 Development</h4>
+                        <p class="trend-description">Decentralized applications and blockchain technologies continue to evolve with a focus on scalability and user experience. The Web3 ecosystem is maturing with improved infrastructure, better developer tools, and increasing adoption in finance, gaming, and digital identity.</p>
+                        <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 85</p>
+                        <div class="trend-events">
+                            <h5 class="mb-3">Related Events</h5>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Blockchain Innovation Forum</div>
+                                <div class="trend-event-date">April 25, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Web3 Developer Conference</div>
+                                <div class="trend-event-date">June 5, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">DeFi Summit</div>
+                                <div class="trend-event-date">June 20, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <h4 class="trend-title">Sustainable Tech</h4>
+                        <p class="trend-description">Growing interest in environmentally sustainable technology solutions and green tech innovations. Companies are increasingly focusing on reducing carbon footprints, developing clean energy solutions, and creating sustainable supply chains through technological innovation.</p>
+                        <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 78</p>
+                        <div class="trend-events">
+                            <h5 class="mb-3">Related Events</h5>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">GreenTech Innovation Summit</div>
+                                <div class="trend-event-date">May 10, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Sustainable Computing Workshop</div>
+                                <div class="trend-event-date">May 22, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">CleanTech Venture Forum</div>
+                                <div class="trend-event-date">June 15, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <h4 class="trend-title">Edge Computing</h4>
+                        <p class="trend-description">Processing data closer to where it's generated is becoming increasingly important as IoT devices proliferate. Edge computing is enabling faster response times, reduced bandwidth usage, and enhanced privacy for applications in smart cities, autonomous vehicles, and industrial IoT.</p>
+                        <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 72</p>
+                        <div class="trend-events">
+                            <h5 class="mb-3">Related Events</h5>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Edge Computing Summit</div>
+                                <div class="trend-event-date">May 18, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">IoT Developer Conference</div>
+                                <div class="trend-event-date">June 8, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trend-card">
+                        <h4 class="trend-title">Quantum Computing Applications</h4>
+                        <p class="trend-description">As quantum hardware advances, practical applications in cryptography, materials science, and optimization problems are emerging. Companies and research institutions are exploring how quantum computing can solve previously intractable problems.</p>
+                        <p class="trend-score"><i class="bi bi-graph-up"></i> Trend score: 68</p>
+                        <div class="trend-events">
+                            <h5 class="mb-3">Related Events</h5>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Quantum Computing Symposium</div>
+                                <div class="trend-event-date">June 25, 2025</div>
+                            </div>
+                            <div class="trend-event-item">
+                                <div class="trend-event-title">Quantum Algorithms Workshop</div>
+                                <div class="trend-event-date">July 10, 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="content-container">
+                    <h4 class="mb-4">Analytics Overview</h4>
+                    
+                    <div class="chart-container mb-4">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-bar-chart-line" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Trend Growth Chart</p>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Event Categories Distribution</h5>
+                    <div class="category-distribution">
+                        <div class="category-item">
+                            AI/ML <span class="category-count">42</span>
+                        </div>
+                        <div class="category-item">
+                            Web Development <span class="category-count">35</span>
+                        </div>
+                        <div class="category-item">
+                            Blockchain <span class="category-count">28</span>
+                        </div>
+                        <div class="category-item">
+                            Mobile Development <span class="category-count">24</span>
+                        </div>
+                        <div class="category-item">
+                            Networking <span class="category-count">20</span>
+                        </div>
+                        <div class="category-item">
+                            Cloud <span class="category-count">18</span>
+                        </div>
+                        <div class="category-item">
+                            Security <span class="category-count">15</span>
+                        </div>
+                        <div class="category-item">
+                            Data Science <span class="category-count">14</span>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Event Locations</h5>
+                    <div class="chart-container mb-4">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-geo-alt" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Location Distribution Map</p>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Event Format</h5>
+                    <div class="chart-container">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-pie-chart" style="font-size: 3rem;"></i>
+                            <p class="mt-2">In-person vs. Virtual Events</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-container">
+                    <h4 class="mb-3">Trending Keywords</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-primary p-2">Generative AI</span>
+                        <span class="badge bg-secondary p-2">Web3</span>
+                        <span class="badge bg-success p-2">Sustainability</span>
+                        <span class="badge bg-danger p-2">Edge Computing</span>
+                        <span class="badge bg-warning text-dark p-2">Quantum</span>
+                        <span class="badge bg-info text-dark p-2">LLMs</span>
+                        <span class="badge bg-dark p-2">Cybersecurity</span>
+                        <span class="badge bg-primary p-2">Metaverse</span>
+                        <span class="badge bg-secondary p-2">FinTech</span>
+                        <span class="badge bg-success p-2">Clean Energy</span>
+                        <span class="badge bg-danger p-2">AR/VR</span>
+                        <span class="badge bg-warning text-dark p-2">Robotics</span>
+                        <span class="badge bg-info text-dark p-2">5G</span>
+                        <span class="badge bg-dark p-2">DevOps</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="footer-title">Silicon Valley Event Pulse</h5>
+                    <p>Your comprehensive source for tech events and trends in Silicon Valley.</p>
+                    <div class="mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="calendar.html" class="footer-link">Calendar</a></li>
+                        <li><a href="trends.html" class="footer-link">Trends</a></li>
+                        <li><a href="llm_settings.html" class="footer-link">LLM Settings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4">
+                    <h5 class="footer-title">Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">AI/ML</a></li>
+                        <li><a href="#" class="footer-link">Web Development</a></li>
+                        <li><a href="#" class="footer-link">Mobile Development</a></li>
+                        <li><a href="#" class="footer-link">Blockchain</a></li>
+                        <li><a href="#" class="footer-link">Networking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4 mb-4">
+                    <h5 class="footer-title">Subscribe</h5>
+                    <p>Get weekly updates on upcoming events and tech trends.</p>
+                    <form>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control" placeholder="Your email">
+                            <button class="btn btn-primary" type="submit">Subscribe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Silicon Valley Event Pulse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Time filter buttons
+            const timeFilterButtons = document.querySelectorAll('.time-filter-btn');
+            timeFilterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    timeFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    // Here you would typically update the trends data based on the selected time period
+                });
+            });
+        });
+    </script>
+</body>
+</html>
