@@ -1,6 +1,6 @@
 // src/components/Filter.jsx
 import React from 'react';
-import { useEvents } from '../hooks/useEvents';
+import { useEvents } from '../hooks/useEvents.jsx';
 
 function Filter() {
   const { 

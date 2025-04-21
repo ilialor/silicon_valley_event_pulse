@@ -2,7 +2,7 @@
 import React from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { useEvents } from '../hooks/useEvents';
+import { useEvents } from '../hooks/useEvents.jsx';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { enUS } from 'date-fns/locale';

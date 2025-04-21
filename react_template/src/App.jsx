@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Calendar from './components/Calendar';
 import EventDetails from './components/EventDetails';
 import Filter from './components/Filter';
-import { EventsProvider } from './hooks/useEvents';
+import { EventsProvider } from './hooks/useEvents.jsx';
 
 function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
