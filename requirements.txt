@@ -1,0 +1,7 @@
+aiohttp==3.9.1
+beautifulsoup4==4.12.2
+scrapy==2.11.0
+selenium==4.15.2
+sqlalchemy==2.0.23
+alembic==1.13.0
+webdriver-manager==4.0.1
