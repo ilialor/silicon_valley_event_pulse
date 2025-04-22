@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
@@ -29,9 +28,18 @@ class EventCollector:
             # Import components only when collector is instantiated
             from silicon_valley_events.api_clients.meetup import MeetupAPI
             from silicon_valley_events.api_clients.eventbrite import EventbriteAPI
-            from silicon_valley_events.scrapers.stanford_events import StanfordEventsSpider 
+            from silicon_valley_events.scrapers.stanford_selenium import StanfordSeleniumScraper
             from silicon_valley_events.scrapers.linkedin_events import LinkedInEventsScraper
             from silicon_valley_events.models.database import EventStorage
+            
+            # Импортируем новые скраперы
+            from silicon_valley_events.scrapers.eventbrite_parser import EventbriteParser
+            from silicon_valley_events.scrapers.eventbrite_selenium import EventbriteSelenium
+            from silicon_valley_events.scrapers.meetup_parser import MeetupParser
+            from silicon_valley_events.scrapers.meetup_selenium import MeetupSelenium
+
+            from silicon_valley_events.scrapers.techcrunch_selenium import TechCrunchSelenium
+            from silicon_valley_events.scrapers.techcrunch_parser import TechCrunchParser
             
             self.config = config
             self.storage = EventStorage(config.get('DATABASE_URL', 'sqlite:///events.db'))
@@ -46,6 +54,10 @@ class EventCollector:
                 config['LINKEDIN_PASSWORD']
             )
             
+            # Инициализируем новые скраперы
+            self.eventbrite_selenium = EventbriteSelenium(headless=config.get('HEADLESS_BROWSER', True))
+            self.meetup_selenium = MeetupSelenium(headless=config.get('HEADLESS_BROWSER', True))
+            self.techcrunch_selenium = TechCrunchSelenium(headless=config.get('HEADLESS_BROWSER', True))
             self.sources = {
                 'meetup': self.meetup_client,
                 'eventbrite': self.eventbrite_client
@@ -83,7 +95,7 @@ class EventCollector:
         for source_name, source in self.sources.items():
             try:
                 logger.info(f"Collecting events from {source_name}")
-                events = await source.fetch_events(start_date, end_date)
+                events = await source.search_events( ["AI"], location="San Francisco, CA", max_pages=3)
                 all_events.extend(events)
                 logger.info(f"Collected {len(events)} events from {source_name}")
             except Exception as e:
@@ -91,27 +103,20 @@ class EventCollector:
                 logger.error(error_msg)
                 errors.append(error_msg)
         
-        # Если это Eventbrite и произошла ошибка API, используем скрейпер
+        # Stop further detailed scraping as per user request, return only API results
+        # return all_events
+        
+        # Если это Eventbrite и произошла ошибка API, используем новый скрейпер
         if source_name == 'eventbrite':
-            # Collect from Eventbrite
             try:
                 logger.info("Переключение на скрейпинг Eventbrite из-за ошибки API")
-                from silicon_valley_events.scrapers.eventbrite_events import EventbriteEventsSpider
-                
-                process = CrawlerProcess({
-                    'USER_AGENT': self.config['USER_AGENTS'][0],
-                    'LOG_LEVEL': 'INFO',
-                    'ROBOTSTXT_OBEY': False,  # Изменено с True на False
-                    'DOWNLOAD_DELAY': 2
-                })
-                
-                # Передаем класс, а не экземпляр
-                process.crawl(EventbriteEventsSpider, max_pages=3)
-                process.start()
-                
-                # Получаем экземпляр паука из процесса
-                eventbrite_spider = next(iter(process.crawlers)).spider
-                eventbrite_events = eventbrite_spider.events
+                # Используем новый EventbriteSelenium скрейпер и сразу получаем события
+                keywords = self.config.get('EVENTBRITE_KEYWORDS', ['tech', 'technology', 'startup', 'programming'])
+                eventbrite_events = self.eventbrite_selenium.search_events(
+                    keywords=keywords,
+                    location="San Francisco, CA",
+                    max_pages=3
+                )
                 all_events.extend(eventbrite_events)
                 logger.info(f"Собрано {len(eventbrite_events)} событий через скрейпинг Eventbrite")
             except Exception as scrape_error:
@@ -191,14 +196,10 @@ class EventCollector:
             logger.error(error_msg)
             errors.append(error_msg)
         
-        # Collect from Meetup
-        # Collect from Meetup using Selenium
+        # Collect from Meetup using initialized Selenium instance
         try:
             logger.info("Сбор событий с Meetup через Selenium")
-            from silicon_valley_events.scrapers.meetup_selenium import MeetupSeleniumScraper
-            
-            meetup_scraper = MeetupSeleniumScraper(headless=False, timeout=10, max_pages=3)
-            meetup_events = await meetup_scraper.fetch_events(start_date, end_date)
+            meetup_events = self.meetup_selenium.scrape_events()
             all_events.extend(meetup_events)
             logger.info(f"Собрано {len(meetup_events)} событий с Meetup через Selenium")
         except Exception as e:
@@ -206,13 +207,10 @@ class EventCollector:
             logger.error(error_msg)
             errors.append(error_msg)
         
-        # Collect from TechCrunch Events using Selenium
+        # Collect from TechCrunch Events using initialized Selenium instance
         try:
             logger.info("Сбор событий с TechCrunch Events через Selenium")
-            from silicon_valley_events.scrapers.techcrunch_selenium import TechCrunchSeleniumScraper
-            
-            techcrunch_scraper = TechCrunchSeleniumScraper(headless=False, timeout=10, max_pages=3)
-            techcrunch_events = await techcrunch_scraper.fetch_events(start_date, end_date)
+            techcrunch_events = self.techcrunch_selenium.scrape_events()
             all_events.extend(techcrunch_events)
             logger.info(f"Собрано {len(techcrunch_events)} событий с TechCrunch Events через Selenium")
         except Exception as e:

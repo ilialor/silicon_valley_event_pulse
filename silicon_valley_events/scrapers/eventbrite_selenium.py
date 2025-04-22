@@ -1,178 +1,266 @@
-import logging
+import os
 import time
-from typing import List, Optional
+import logging
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 import json
-from .selenium_base import BaseSeleniumScraper
 
-logger = logging.getLogger(__name__)
+# Импортируем наш парсер
+from .eventbrite_parser import EventbriteParser
 
-class EventbriteSeleniumScraper(BaseSeleniumScraper):
+# Настройка логирования
+logging.basicConfig(level=logging.INFO, 
+                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('eventbrite_selenium')
+
+class EventbriteSelenium:
     """
-    Скрейпер для сбора событий с сайта Eventbrite с использованием Selenium
+    Класс для загрузки страницы Eventbrite Events с помощью Selenium
+    и последующего парсинга событий
     """
     
-    def __init__(self, headless=True, timeout=10, max_pages=3):
+    def __init__(self, headless=True):
         """
-        Инициализация скрейпера
+        Инициализация Selenium
         
         Args:
-            headless (bool): Запускать браузер в фоновом режиме
-            timeout (int): Таймаут ожидания элементов в секундах
-            max_pages (int): Максимальное количество страниц для сбора
+            headless: Запускать браузер в фоновом режиме (без GUI)
         """
-        super().__init__(headless, timeout)
-        self.max_pages = max_pages
-        self.source_name = "eventbrite"
+        logger.info("Инициализация Eventbrite Selenium")
+        
+        # Настройка опций Chrome
+        chrome_options = Options()
+        if headless:
+            chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--window-size=1920,1080")
+        
+        # Добавляем User-Agent для обхода блокировки ботов
+        chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36")
+        
+        # Инициализация драйвера
+        try:
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            logger.info("Драйвер Chrome успешно инициализирован")
+        except Exception as e:
+            logger.error(f"Ошибка при инициализации драйвера Chrome: {str(e)}")
+            raise
+        
+        # Создаем директории для сохранения данных
+        self.data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data')
+        self.eventbrite_dir = os.path.join(self.data_dir, 'eventbrite')
+        self.events_pages_dir = os.path.join(self.eventbrite_dir, 'events_pages')
+        
+        os.makedirs(self.data_dir, exist_ok=True)
+        os.makedirs(self.eventbrite_dir, exist_ok=True)
+        os.makedirs(self.events_pages_dir, exist_ok=True)
+        
+        logger.info(f"Созданы директории для сохранения данных: {self.eventbrite_dir}")
     
-    async def fetch_events(self, start_date=None, end_date=None):
+    def __del__(self):
         """
-        Сбор событий с Eventbrite
+        Закрытие драйвера при уничтожении объекта
+        """
+        if hasattr(self, 'driver'):
+            try:
+                self.driver.quit()
+                logger.info("Драйвер Chrome успешно закрыт")
+            except Exception as e:
+                logger.error(f"Ошибка при закрытии драйвера Chrome: {str(e)}")
+    
+    def search_events(self, keywords, location="San Francisco, CA", max_pages=5):
+        """
+        Поиск событий на Eventbrite по ключевым словам и локации
         
         Args:
-            start_date: Начальная дата для фильтрации событий
-            end_date: Конечная дата для фильтрации событий
+            keywords: Список ключевых слов для поиска
+            location: Локация для поиска (по умолчанию "San Francisco, CA")
+            max_pages: Максимальное количество страниц для парсинга
         
         Returns:
-            List[Event]: Список собранных событий
+            List[Event]: Список найденных событий
         """
-        try:
-            self.setup_driver()
+        all_events = []
+        
+        for keyword in keywords:
+            logger.info(f"Поиск событий по ключевому слову: '{keyword}' в локации '{location}'")
             
-            # URL для поиска событий в Сан-Франциско
-            url = "https://www.eventbrite.com/d/ca--san-francisco/events/"
-            logger.info(f"Загрузка страницы Eventbrite: {url}")
+            # Build search URL based on location (City, State) and keyword
+            if ',' in location:
+                city, state = location.split(',')
+                state_slug = state.strip().lower()
+                city_slug = city.strip().lower().replace(' ', '-')
+                location_slug = f"{state_slug}--{city_slug}"
+            else:
+                location_slug = location.strip().lower().replace(' ', '-')
+            keyword_slug = keyword.strip().lower().replace(' ', '-')
+            # Start from page 1
+            search_url = f"https://www.eventbrite.com"
+            # search_url = f"https://www.eventbrite.com/d/{location_slug}/{keyword_slug}/?page=1"
             
-            self.driver.get(url)
-            time.sleep(3)  # Даем время для загрузки страницы
-            
-            # Собираем события с нескольких страниц
-            current_page = 1
-            
-            while current_page <= self.max_pages:
-                logger.info(f"Обработка страницы Eventbrite {current_page} из {self.max_pages}")
+            try:
+                # Navigate to homepage first to avoid captcha
+                try:
+                    self.driver.get("https://www.eventbrite.com")
+                    WebDriverWait(self.driver, 10).until(
+                        EC.presence_of_element_located((By.TAG_NAME, "body"))
+                    )
+                    homepage_path = os.path.join(
+                        self.eventbrite_dir,
+                        f"homepage_{keyword.replace(' ', '_')}.html"
+                    )
+                    with open(homepage_path, 'w', encoding='utf-8') as f:
+                        f.write(self.driver.page_source)
+                    logger.info(f"Saved Eventbrite homepage: {homepage_path}")
+                except Exception as e:
+                    logger.error(f"Error loading Eventbrite homepage: {str(e)}")
+                # Загружаем страницу поиска
+                self.driver.get(search_url)
+                logger.info(f"Загружена страница поиска: {search_url}")
+                                
+                # Ждем загрузки результатов
+                WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, ".search-results-container"))
+                )
                 
-                # Ждем загрузки карточек событий
-                event_cards = self.wait_for_elements(By.CSS_SELECTOR, "div.search-event-card-wrapper, article.event-card")
+                # Сохраняем HTML страницы поиска
+                search_page_path = os.path.join(self.eventbrite_dir, f"search_{keyword.replace(' ', '_')}.html")
+                with open(search_page_path, 'w', encoding='utf-8') as f:
+                    f.write(self.driver.page_source)
+                logger.info(f"Сохранена страница поиска: {search_page_path}")
                 
-                if not event_cards:
-                    logger.warning("Не найдены карточки событий на странице Eventbrite")
-                    break
+                # Парсим события с первой страницы
+                events = self._parse_search_page(keyword)
+                all_events.extend(events)
                 
-                logger.info(f"Найдено {len(event_cards)} событий на странице Eventbrite")
-                
-                # Обрабатываем каждую карточку события
-                for card in event_cards:
+                # Переходим на следующие страницы, если нужно
+                current_page = 1
+                while current_page < max_pages:
                     try:
-                        # Извлекаем ссылку на событие
-                        link_element = card.find_element(By.CSS_SELECTOR, "a.event-card-link, a.eds-event-card-content__action-link")
-                        event_url = link_element.get_attribute("href")
+                        # Проверяем наличие кнопки "Следующая страница"
+                        next_button = self.driver.find_element(By.CSS_SELECTOR, "button[data-spec='page-next']")
                         
-                        # Открываем страницу события в новой вкладке
-                        self.driver.execute_script("window.open(arguments[0]);", event_url)
+                        if not next_button.is_enabled():
+                            logger.info("Достигнут конец результатов поиска")
+                            break
                         
-                        # Переключаемся на новую вкладку
-                        self.driver.switch_to.window(self.driver.window_handles[-1])
+                        # Переходим на следующую страницу
+                        next_button.click()
+                        current_page += 1
+                        logger.info(f"Переход на страницу {current_page}")
                         
-                        # Ждем загрузки страницы события
-                        time.sleep(2)
+                        # Ждем загрузки результатов
+                        WebDriverWait(self.driver, 10).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, ".search-results-container"))
+                        )
                         
-                        # Извлекаем информацию о событии
-                        self._parse_event_page()
+                        # Сохраняем HTML страницы поиска
+                        search_page_path = os.path.join(self.eventbrite_dir, f"search_{keyword.replace(' ', '_')}_page{current_page}.html")
+                        with open(search_page_path, 'w', encoding='utf-8') as f:
+                            f.write(self.driver.page_source)
+                        logger.info(f"Сохранена страница поиска: {search_page_path}")
                         
-                        # Закрываем вкладку и возвращаемся к списку событий
-                        self.driver.close()
-                        self.driver.switch_to.window(self.driver.window_handles[0])
+                        # Парсим события с текущей страницы
+                        events = self._parse_search_page(keyword)
+                        all_events.extend(events)
                         
                     except Exception as e:
-                        logger.error(f"Ошибка при обработке карточки события Eventbrite: {str(e)}")
-                
-                # Переходим на следующую страницу, если она есть
-                if current_page < self.max_pages:
-                    try:
-                        next_button = self.driver.find_element(By.CSS_SELECTOR, "a[data-spec='page-next']")
-                        next_button.click()
-                        time.sleep(3)  # Даем время для загрузки следующей страницы
-                        current_page += 1
-                    except NoSuchElementException:
-                        logger.info("Достигнут конец списка событий Eventbrite")
+                        logger.error(f"Ошибка при переходе на следующую страницу: {str(e)}")
                         break
-                else:
-                    break
             
-            logger.info(f"Всего собрано событий Eventbrite: {self.event_count}")
-            return self.events
-            
-        except Exception as e:
-            logger.error(f"Ошибка при сборе событий Eventbrite: {str(e)}")
-            return []
-        finally:
-            self.close()
+            except Exception as e:
+                logger.error(f"Ошибка при загрузке страницы поиска: {str(e)}")
+                continue
+        
+        logger.info(f"Всего найдено {len(all_events)} событий")
+        return all_events
     
-    def _parse_event_page(self):
+    def _parse_search_page(self, keyword):
         """
-        Парсинг страницы отдельного события
+        Парсинг страницы с результатами поиска
+        
+        Args:
+            keyword: Ключевое слово, по которому производился поиск
+        
+        Returns:
+            List[Event]: Список событий с текущей страницы
         """
+        events = []
+        
         try:
-            # Извлекаем заголовок события
-            title_element = self.wait_for_element(By.CSS_SELECTOR, "h1.event-title, h1.eds-text-hl")
-            title = self.clean_text(title_element.text) if title_element else "Без названия"
+            # Находим все карточки событий
+            event_cards = self.driver.find_elements(By.CSS_SELECTOR, ".search-event-card-wrapper")
+            logger.info(f"Найдено {len(event_cards)} карточек событий на текущей странице")
             
-            # Извлекаем описание события
-            description_element = self.wait_for_element(By.CSS_SELECTOR, "div.event-description, div.eds-text-bs")
-            description = self.clean_text(description_element.text) if description_element else ""
+            # Обрабатываем каждую карточку
+            for i, card in enumerate(event_cards, 1):
+                try:
+                    # Получаем ссылку на событие
+                    event_link = card.find_element(By.CSS_SELECTOR, "a.event-card-link").get_attribute("href")
+                    
+                    # Сохраняем HTML карточки для отладки
+                    card_html = card.get_attribute("outerHTML")
+                    card_debug_path = os.path.join(self.events_pages_dir, f"event_card_{keyword.replace(' ', '_')}_{i}.html")
+                    with open(card_debug_path, 'w', encoding='utf-8') as f:
+                        f.write(card_html)
+                    logger.info(f"Сохранен HTML карточки события для отладки: {card_debug_path}")
+                    
+                    # Загружаем страницу события
+                    self.driver.execute_script("window.open('');")
+                    self.driver.switch_to.window(self.driver.window_handles[1])
+                    self.driver.get(event_link)
+                    logger.info(f"Загружена страница события: {event_link}")
+                    
+                    # Ждем загрузки страницы события
+                    WebDriverWait(self.driver, 10).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "main"))
+                    )
+                    
+                    # Сохраняем HTML страницы события
+                    event_page_path = os.path.join(self.events_pages_dir, f"event_{keyword.replace(' ', '_')}_{i}.html")
+                    with open(event_page_path, 'w', encoding='utf-8') as f:
+                        f.write(self.driver.page_source)
+                    logger.info(f"Сохранена страница события: {event_page_path}")
+                    
+                    # Закрываем вкладку и возвращаемся к результатам поиска
+                    self.driver.close()
+                    self.driver.switch_to.window(self.driver.window_handles[0])
+                    
+                except Exception as e:
+                    logger.error(f"Ошибка при обработке карточки события {i}: {str(e)}")
+                    # Если открыли новую вкладку, но произошла ошибка, закрываем её
+                    if len(self.driver.window_handles) > 1:
+                        self.driver.close()
+                        self.driver.switch_to.window(self.driver.window_handles[0])
             
-            # Извлекаем дату события
-            date_element = self.wait_for_element(By.CSS_SELECTOR, "time, p.date-info")
-            date_str = date_element.text if date_element else ""
-            start_date = self.extract_date(date_str) if date_str else datetime.now()
+            # Парсим сохраненные страницы событий
+            parser = EventbriteParser()
+            events = parser.parse_events()
             
-            # Извлекаем местоположение
-            location_element = self.wait_for_element(By.CSS_SELECTOR, "div.event-details__data, p.location-info")
-            location = self.clean_text(location_element.text) if location_element else ""
-            
-            # URL события
-            url = self.driver.current_url
-            
-            # Извлекаем организатора
-            organizer_element = self.wait_for_element(By.CSS_SELECTOR, "a.js-d-scroll-to, a.organizer-name")
-            organizer = self.clean_text(organizer_element.text) if organizer_element else ""
-            
-            # Извлекаем теги
-            tags = []
-            tag_elements = self.driver.find_elements(By.CSS_SELECTOR, "a.js-event-categories, a.event-category")
-            for tag_element in tag_elements:
-                tag = self.clean_text(tag_element.text)
-                if tag:
-                    tags.append(tag)
-            
-            # Извлекаем URL изображения
-            image_element = self.wait_for_element(By.CSS_SELECTOR, "picture img, img.event-logo")
-            image_url = image_element.get_attribute("src") if image_element else ""
-            
-            # Определяем, является ли событие онлайн
-            is_online = False
-            if location:
-                is_online = any(keyword in location.lower() for keyword in ['online', 'zoom', 'virtual', 'webinar'])
-            else:
-                # Проверяем по заголовку или описанию
-                is_online = any(keyword in (title + description).lower() for keyword in ['online', 'zoom', 'virtual', 'webinar'])
-            
-            # Создаем объект события
-            self.create_event(
-                title=title,
-                description=description,
-                start_time=start_date,
-                location=location,
-                url=url,
-                source=self.source_name,
-                tags=tags,
-                image_url=image_url,
-                organizer=organizer,
-                is_online=is_online
-            )
+            return events
             
         except Exception as e:
-            logger.error(f"Ошибка при парсинге страницы события Eventbrite: {str(e)}")
+            logger.error(f"Ошибка при парсинге страницы поиска: {str(e)}")
+            return []
+
+# Точка входа для запуска модуля напрямую
+if __name__ == "__main__":
+    # Список ключевых слов для поиска
+    keywords = ["artificial intelligence", "machine learning", "data science", "startup", "tech conference"]
+    
+    # Создаем экземпляр класса и запускаем поиск
+    eventbrite = EventbriteSelenium(headless=False)
+    events = eventbrite.search_events(keywords)
+    
+    print(f"Найдено событий: {len(events)}")
+    for event in events:
+        print(f"- {event.title} ({event.start_date})")

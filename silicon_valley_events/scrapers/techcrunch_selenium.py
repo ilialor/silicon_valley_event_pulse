@@ -25,14 +25,20 @@ class TechCrunchSelenium:
     и последующего парсинга событий
     """
     
-    def __init__(self, headless=True):
+    def __init__(self, headless=True, timeout=None, max_pages=None):
         """
         Инициализация Selenium
         
         Args:
             headless: Запускать браузер в фоновом режиме (без GUI)
+            timeout: WebDriver wait timeout (seconds)
+            max_pages: Maximum number of pages to scrape
         """
         logger.info("Инициализация TechCrunch Selenium")
+        
+        # Optional parameters for compatibility
+        self.timeout = timeout
+        self.max_pages = max_pages
         
         # Настройка опций Chrome
         chrome_options = Options()
@@ -101,7 +107,7 @@ class TechCrunchSelenium:
             logger.info(f"Найдено {len(events)} событий")
             
             # Для каждого события загружаем его страницу и сохраняем HTML
-            self._scrape_event_pages(events)
+            # self._scrape_event_pages(events)
             
             # Сохраняем события в JSON-файл
             self._save_events_to_json(events)
