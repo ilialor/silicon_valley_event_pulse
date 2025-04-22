@@ -13,10 +13,14 @@ A comprehensive data collection and processing system for tech events in Silicon
 ## Installation
 
 1. Clone the repository
-2. Install required packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
+2. python -m venv venv
+venv\Scripts\activate
+3.  Install required packages:
+pip install -r requirements.txt
+pip install -e .
+python -m main
+
+
 3. Set up configuration:
    - Copy `config/settings.py.example` to `config/settings.py`
    - Add your API keys and credentials

@@ -2934,7 +2934,7 @@
             ],
             "planner": {
                 "plan": {
-                    "goal": "[Message] from User to Alex: @Alex  continue with your work",
+                    "goal": "",
                     "context": "",
                     "tasks": [],
                     "task_map": {},

@@ -191,8 +191,17 @@
       "server": "4f62c8cc-7d0c-4277-8d12-69e9dd8dde62",
       "cmd": "pnpm run lint && pnpm run dev",
       "timeline_index": 49,
-      "status": "success",
-      "logs": []
+      "status": "initializing",
+      "logs": [
+        "\n",
+        "\n",
+        "> react-template@0.0.0 dev /data/chats/4xjw3/workspace/react_template\n",
+        "> vite\n",
+        "\n",
+        "\n",
+        "  VITE v5.4.3  ready in 693 ms\n",
+        "\n"
+      ]
     }
   },
   "deploy": {}
